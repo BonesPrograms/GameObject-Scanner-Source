@@ -1,6 +1,6 @@
 {
-    "ID": "dodts_ts",
-    "Title": "DODTS tester",
+    "ID": "dodts_ts_source",
+    "Title": "DODTS tester source",
     "Author": "{{M sequence|Mr}}{{B sequence|Beast}}",
     "Description": "Introduces vampirism to Caves of Qud.",
     "PreviewImage": "preview.png"
