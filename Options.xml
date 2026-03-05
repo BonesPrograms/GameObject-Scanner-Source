@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<options>
+  <option
+    ID="DODTS"
+    DisplayText="Enable dropping data packets on death."
+    Category="GameObject Scanner"
+    Type="Checkbox"
+    Default="Yes">
+  </option>
+  </options>

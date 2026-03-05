@@ -1,0 +1,8 @@
+{
+  "WorkshopId": 3677281080,
+  "Title": "GameObject Scanner",
+  "Description": "\nAll creatures drop a data package on death with all their partd, skills, mutations, stats and other details recorded. You can read these packets, or scan any gameobject, with the commands:\n\nread: reads all combat objects in target cell\nreadany: reads any objects in cell\nreadpack: reads game object data packets\n\nThere is an option to disable packets dropping on death, you can still read any objects.\n\nthe packets spawn on all corpses but may spawn beneath them. they are obvious magenta coffins",
+  "Tags": "modding,tool,script",
+  "Visibility": "2",
+  "ImagePath": "preview.png"
+}
