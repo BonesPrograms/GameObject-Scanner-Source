@@ -47,7 +47,7 @@ namespace XRL.World.Parts
         public List<string> IParts = new();
         public List<string> Effects = new();
         public List<string> Skills = new();
-        Dictionary<string, object> Collections => new()
+        public Dictionary<string, object> Collections => new()
         {
             [nameof(MutationsWithLevels)] = MutationsWithLevels,
             [nameof(IParts)] = IParts,
@@ -75,9 +75,9 @@ namespace XRL.World.Parts
 
         }
 
-        public GameObjectDataRecord(GameObject Object)
+        public GameObjectDataRecord(GameObject gameObject)
         {
-            Record(Object);
+            Record(gameObject);
         }
         static void CleanConsole()
         {
@@ -93,83 +93,79 @@ namespace XRL.World.Parts
             ReadArrays(Collections);
             MetricsManager.LogInfo($"\nREADING INFO ON {DisplayName}, {Blueprint}, {ID} END");
         }
-        void ReadArrays(Dictionary<string, object> arrays)
+        void ReadArrays(Dictionary<string, object> collections)
         {
-            arrays.ForEach(x =>
+            collections.ForEach(x =>
             {
                 MetricsManager.LogInfo($"\n {x.Key} START");
                 CastArray(x.Value);
                 MetricsManager.LogInfo($"{x.Key} END");
             });
         }
-        void Record(GameObject Object)
+        void Record(GameObject gameObj)
         {
-            RecordMutations(Object);
-            RecordIParts(Object.PartsList);
-            RecordSkills(Object);
-            RecordStats(Object);
-            RecordFX(Object);
-            RecordStringProperties(Object);
-            RecordIntProperties(Object);
-            Blueprint = Object.Blueprint;
-            Level = Object.Level;
-            DisplayName = Object.DisplayName;
-            BaseHP = Object.baseHitpoints;
-            IsAlive = Object.IsAlive;
-            IsOrganic = Object.IsOrganic;
-            ID = Object.ID;
+            RecordMutations(gameObj);
+            RecordIParts(gameObj.PartsList);
+            RecordSkills(gameObj);
+            RecordStats(gameObj);
+            RecordFX(gameObj);
+            RecordStringProperties(gameObj);
+            RecordIntProperties(gameObj);
+            Blueprint = gameObj.Blueprint;
+            Level = gameObj.Level;
+            DisplayName = gameObj.DisplayName;
+            BaseHP = gameObj.baseHitpoints;
+            IsAlive = gameObj.IsAlive;
+            IsOrganic = gameObj.IsOrganic;
+            ID = gameObj.ID;
         }
-        void RecordIntProperties(GameObject Object)
+        void RecordIntProperties(GameObject gameObj)
         {
-            IntProperties = new(Object.IntProperty);
-        }
-
-        void RecordStringProperties(GameObject Object)
-        {
-            Properties = new(Object.Property);
+            IntProperties = new(gameObj.IntProperty);
         }
 
-        void RecordFX(GameObject Object)
+        void RecordStringProperties(GameObject GameObj)
         {
-            Effects = GetTypeNames(Object.Effects);
+            Properties = new(GameObj.Property);
         }
 
-        void RecordSkills(GameObject Object)
+        void RecordFX(GameObject gameObj)
         {
-            var skills = Object.GetPart<Skills>();
-            if (skills != null)
+            Effects = GetTypeNames(gameObj.Effects);
+        }
+
+        void RecordSkills(GameObject gameObj)
+        {
+            var skills = gameObj.GetPart<Skills>();
+            if (skills?.SkillList != null)
                 Skills = GetTypeNames(skills.SkillList);
         }
 
-        void RecordMutations(GameObject Object)
+        void RecordMutations(GameObject gameObj)
         {
-            Mutations m = Object.GetPart<Mutations>();
-            if (m != null && m.MutationList.Count > 0)
+            Mutations m = gameObj.GetPart<Mutations>();
+            if (m?.MutationList?.Count > 0)
             {
-                m.MutationList.ForEach(x => MutationsWithLevels[x.Name] = x.Level);
+                MutationsWithLevels = m.MutationList.ToDictionary(x => x.Name, x => x.Level);
                 HadMutations = true;
-
             }
         }
 
-        void RecordStats(GameObject Object)
+        void RecordStats(GameObject gameObj)
         {
-            if (Object.Statistics != null)
-            {
-                Object.Statistics.ForEach(x => StatLevels[x.Key] = x.Value.Value);
-            }
+            if (gameObj.Statistics != null)
+                StatLevels = gameObj.Statistics.ToDictionary(x => x.Key, x => x.Value.Value);
         }
 
         void RecordIParts(PartRack parts)
         {
-            parts.Where(x => x is not (BaseMutation or BaseSkill)).ForEach(x => IParts.Add(x.GetType().Name));
+            IParts = GetTypeNames(parts, x => x is not (BaseMutation or BaseSkill));
         }
 
-        static List<string> GetTypeNames<T>(IList<T> list)
+        static List<string> GetTypeNames<T>(IEnumerable<T> collection, Func<T, bool> expr = null)
         {
-            List<string> set = new(list.Count);
-            list.ForEach(x => set.Add(x.GetType().Name));
-            return set;
+            static string GetNameOfT(T t) => t.GetType().Name;
+            return expr == null ? collection.Select(GetNameOfT).ToList() : collection.Where(expr).Select(GetNameOfT).ToList();
         }
 
         static void Read<T>(Dictionary<string, T> array)
