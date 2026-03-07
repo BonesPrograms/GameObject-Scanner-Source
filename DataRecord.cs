@@ -98,7 +98,7 @@ namespace XRL.World.Parts
             collections.ForEach(x =>
             {
                 MetricsManager.LogInfo($"\n {x.Key} START");
-                CastArray(x.Value);
+                CastCollection(x.Value);
                 MetricsManager.LogInfo($"{x.Key} END");
             });
         }
@@ -168,27 +168,27 @@ namespace XRL.World.Parts
             return expr == null ? collection.Select(GetNameOfT).ToList() : collection.Where(expr).Select(GetNameOfT).ToList();
         }
 
-        static void Read<T>(Dictionary<string, T> array)
+        static void Read<T>(Dictionary<string, T> dic)
         {
-            array.ForEach(x => MetricsManager.LogInfo($"{x.Key}. {x.Value}"));
+            dic.ForEach(x => MetricsManager.LogInfo($"{x.Key}. {x.Value}"));
         }
-        static void Read(List<string> array)
+        static void Read(List<string> list)
         {
-            array.ForEach(x => MetricsManager.LogInfo(x));
+            list.ForEach(x => MetricsManager.LogInfo(x));
         }
 
-        static void CastArray(object obj)
+        static void CastCollection(object collection)
         {
-            switch (obj)
+            switch (collection)
             {
-                case Dictionary<string, int> stringIntArray:
-                    Read(stringIntArray);
+                case Dictionary<string, int> stringIntDictionary:
+                    Read(stringIntDictionary);
                     break;
-                case Dictionary<string, string> stringStringArray:
-                    Read(stringStringArray);
+                case Dictionary<string, string> stringStringDictionary:
+                    Read(stringStringDictionary);
                     break;
-                case List<string> stringArray:
-                    Read(stringArray);
+                case List<string> stringList:
+                    Read(stringList);
                     break;
             }
         }
