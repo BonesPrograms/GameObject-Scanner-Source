@@ -105,7 +105,7 @@ namespace XRL.World.Parts
         void Record(GameObject gameObj)
         {
             RecordMutations(gameObj);
-            RecordIParts(gameObj.PartsList);
+            RecordIParts(gameObj);
             RecordSkills(gameObj);
             RecordStats(gameObj);
             RecordFX(gameObj);
@@ -131,7 +131,7 @@ namespace XRL.World.Parts
 
         void RecordFX(GameObject gameObj)
         {
-            Effects = GetTypeNames(gameObj.Effects);
+            Effects = GetTypeNames(gameObj.Effects, x => x.Duration > 0);
         }
 
         void RecordSkills(GameObject gameObj)
@@ -157,9 +157,9 @@ namespace XRL.World.Parts
                 StatLevels = gameObj.Statistics.ToDictionary(x => x.Key, x => x.Value.Value);
         }
 
-        void RecordIParts(PartRack parts)
+        void RecordIParts(GameObject gameObj)
         {
-            IParts = GetTypeNames(parts, x => x is not (BaseMutation or BaseSkill));
+            IParts = GetTypeNames(gameObj.PartsList, x => x is not (BaseMutation or BaseSkill));
         }
 
         static List<string> GetTypeNames<T>(IEnumerable<T> collection, Func<T, bool> expr = null)
@@ -170,7 +170,7 @@ namespace XRL.World.Parts
 
         static void Read<T>(Dictionary<string, T> dic)
         {
-            dic.ForEach(x => MetricsManager.LogInfo($"{x.Key}. {x.Value}"));
+            dic.ForEach(x => MetricsManager.LogInfo($"{x.Key}, {x.Value}"));
         }
         static void Read(List<string> list)
         {
