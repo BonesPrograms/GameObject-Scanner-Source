@@ -32,6 +32,7 @@ namespace XRL.World.Parts
 
     public class GameObjectDataRecord : IPart
     {
+        const string COMMAND_NAME = "ReadDataRecordObject";
         public string DisplayName;
         public string Blueprint;
         public string ID;
@@ -78,6 +79,30 @@ namespace XRL.World.Parts
         public GameObjectDataRecord(GameObject gameObject)
         {
             Record(gameObject);
+        }
+
+        public override bool WantEvent(int ID, int Cascade)
+        {
+            if (ID == GetInventoryActionsEvent.ID || ID == InventoryActionEvent.ID)
+                return true;
+            return base.WantEvent(ID, Cascade);
+        }
+
+        public override bool HandleEvent(GetInventoryActionsEvent E)
+        {
+            if (E.Actor.IsPlayer())
+                E.AddAction("Read", "read", COMMAND_NAME, null, 'a', FireOnActor: false, 0, 0, Override: false, WorksAtDistance: true, WorksTelekinetically: true);
+            return base.HandleEvent(E);
+        }
+
+        public override bool HandleEvent(InventoryActionEvent E)
+        {
+            if (E.Command == COMMAND_NAME)
+            {
+                ReadData();
+                UI.Popup.Show($"Record of {DisplayName} {ID} read. See player log.");
+            }
+            return base.HandleEvent(E);
         }
         static void CleanConsole()
         {
