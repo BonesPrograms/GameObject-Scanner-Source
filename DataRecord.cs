@@ -32,6 +32,9 @@ namespace XRL.World.Parts
 
     public class GameObjectDataRecord : IPart
     {
+
+        [NonSerialized]
+        public GameObject Object;
         const string COMMAND_NAME = "ReadDataRecordObject";
         public string DisplayName;
         public string Blueprint;
@@ -78,7 +81,20 @@ namespace XRL.World.Parts
 
         public GameObjectDataRecord(GameObject gameObject)
         {
+            Object = gameObject.DeepCopy();
             Record(gameObject);
+        }
+
+        public override void Write(GameObject Basis, SerializationWriter Writer)
+        {
+            Writer.WriteGameObject(Object);
+            base.Write(Basis, Writer);
+        }
+
+        public override void Read(GameObject Basis, SerializationReader Reader)
+        {
+            Object = Reader.ReadGameObject();
+            base.Read(Basis, Reader);
         }
 
         public override bool WantEvent(int ID, int Cascade)

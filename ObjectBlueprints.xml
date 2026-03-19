@@ -8,6 +8,8 @@
 	<object Name="DataPacket" Inherits="PhysicalObject">
 		<part Name="Render" DisplayName="dataPacket" Tile="dodts/coffin3.png" ColorString="&amp;W" DetailColor="M"/>
 		<tag Name="OverlayColor" Value="&amp;G^k" />
+		<part Name="NoBreak"/>
+		<part Name="NoDamge"/>
    		<part Name="Physics" Organic="false" Takeable="true" Solid="false" Weight="1"/>
 	</object>
 	

@@ -23,7 +23,7 @@ namespace XRL.World.Parts
             if (E.Dying.CurrentCell != null)
             {
                 GameObject obj = GameObject.Create("DataPacket");
-                string tag = E.Dying.DisplayName +", " + E.Dying.ID + ", "+ E.Dying.Blueprint;
+                string tag = E.Dying.DisplayName + ", " + E.Dying.ID + ", " + E.Dying.Blueprint;
                 obj.DisplayName = tag;
                 obj.AddPart(new GameObjectDataRecord(E.Dying));
                 E.Dying.CurrentCell.AddObject(obj);
@@ -40,6 +40,27 @@ namespace XRL.Wish
     public static class Wishes
     {
 
+        [WishCommand("res")]
+
+        public static void Res()
+        {
+            Cell cell = The.Player.PickDirection("res");
+            if (cell != null)
+            {
+                var record = cell.Objects.Select(x => x.GetPart<GameObjectDataRecord>()).FirstOrDefault(x => x != null);
+                if (record == null)
+                {
+                    IComponent<GameObject>.AddPlayerMessage("No object found with data record.");
+                    return;
+                }
+                GameObject gameObj = record.Object;
+                gameObj.MakeActive();
+                cell.AddObject(gameObj);
+                gameObj.RestorePristineHealth();
+                IComponent<GameObject>.AddPlayerMessage($"{gameObj.t()} resurrected!");
+            }
+        }
+
         [WishCommand("readpack")]
         public static void ReadCopy()
         {
@@ -47,7 +68,7 @@ namespace XRL.Wish
             if (cell != null)
             {
                 int records = 0;
-                cell.Objects.ForEach(x => { if (x.TryGetPart(out GameObjectDataRecord record)) {records++; record.ReadData();} });
+                cell.Objects.ForEach(x => { if (x.TryGetPart(out GameObjectDataRecord record)) { records++; record.ReadData(); } });
                 if (records > 0)
                     IComponent<GameObject>.AddPlayerMessage($"Read {records} records. See Player.log");
                 else
@@ -75,7 +96,7 @@ namespace XRL.Wish
             Cell cell = GO.PickDirection("read");
             if (cell != null)
             {
-                cell.Objects.Where(x=> x.IsCombatObject()).ForEach(x => { GameObjectDataRecord record = new(x); record.ReadData(); });
+                cell.Objects.Where(x => x.IsCombatObject()).ForEach(x => { GameObjectDataRecord record = new(x); record.ReadData(); });
                 IComponent<GameObject>.AddPlayerMessage($"ReadComplete {cell.Objects.Count} objects. See Player.log");
             }
         }
