@@ -104,14 +104,14 @@ namespace XRL.World.Parts
             }
             return base.HandleEvent(E);
         }
-        static void CleanConsole()
+        static void CleanConsole(int count)
         {
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < count; i++)
                 MetricsManager.LogInfo("\n");
         }
-        public void ReadData()
+        public void ReadData(int count = 25)
         {
-            CleanConsole();
+            CleanConsole(count);
             MetricsManager.LogInfo($"\nREADING INFO ON {DisplayName}, {Blueprint}, {ID} START");
             Read(SimpleFields);
             MetricsManager.LogInfo("\n COLLECTIONS STARTED");
